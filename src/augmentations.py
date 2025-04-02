@@ -16,9 +16,16 @@ def _load_places(batch_size=256, image_size=84, num_workers=16, use_val=False):
 	global places_dataloader, places_iter
 	partition = 'val' if use_val else 'train'
 	print(f'Loading {partition} partition of places365_standard...')
-	for data_dir in utils.load_config('datasets'):
+	
+	# 硬编码数据集路径
+	data_paths = [
+		"/mnt/lustre/GPU4/home/wuhanpeng/DrIT-main/datasets/places365_standard",
+		"/mnt/lustre/GPU4/home/wuhanpeng/DrIT-main/datasets/DAVIS"
+	]
+	
+	for data_dir in data_paths:
 		if os.path.exists(data_dir):
-			fp = os.path.join(data_dir, 'places365_standard', partition)
+			fp = os.path.join(data_dir, partition) if "places365_standard" in data_dir else data_dir
 			if not os.path.exists(fp):
 				print(f'Warning: path {fp} does not exist, falling back to {data_dir}')
 				fp = data_dir
@@ -31,10 +38,10 @@ def _load_places(batch_size=256, image_size=84, num_workers=16, use_val=False):
 				batch_size=batch_size, shuffle=True,
 				num_workers=num_workers, pin_memory=True)
 			places_iter = iter(places_dataloader)
+			print('Loaded dataset from', data_dir)
 			break
 	if places_iter is None:
-		raise FileNotFoundError('failed to find places365 data at any of the specified paths')
-	print('Loaded dataset from', data_dir)
+		raise FileNotFoundError('failed to find places365 data at any of the specified paths: ' + str(data_paths))
 
 
 def _get_places_batch(batch_size):

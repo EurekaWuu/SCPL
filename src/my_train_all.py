@@ -6,6 +6,8 @@ import numpy as np
 import gym
 import utils
 import time
+import datetime
+import re
 from arguments import parse_args
 from env.wrappers import make_env
 from algorithms.factory import make_agent
@@ -41,6 +43,7 @@ def parse_args():
                                                                           "sgsac88", "sgsac89", "sgsac90", "sgsac91", "sgsac92", "sgsac93", "sgsac94", "sgsac95", "sgsac96", \
                                                                           "sgsac97", "sgsac98", "sgsac99", "sgsac101", "sgsac102", "sgsac103", "sgsac104", "sgsac105",'svea2', 'svea3', 'svea4', 'svea5', 'svea6',  "scpl", "scpl0", "scplr", "scpl0r"])
     parser.add_argument('--eval_mode', default='all', type=str, choices=['train', 'color_easy', 'color_hard', 'video_easy', 'video_hard', 'distracting_cs', 'none', 'all'])
+    parser.add_argument('--save_model', action='store_true', help='Save model during training')
     args = parser.parse_args()
     return args
 
@@ -116,6 +119,11 @@ class Param:
         self.render = render
         self.port = port
         self.device = 0
+        
+        # 添加SODA算法需要的属性
+        self.aux_update_freq = 2
+        self.aux_lr = 3e-4  # 与encoder_lr相同的值
+        self.aux_beta = 0.9  # 与critic_beta相同的值
 
 class MODEL():
     def __init__(self, param, device):
@@ -176,7 +184,6 @@ class MODEL():
         self.eval_episodes = param.eval_episodes
         self.distracting_cs_intensity = param.distracting_cs_intensity
         self.seed = param.seed
-        self.work_dir = os.path.join(param.work_dir, param.domain_name+'_'+param.task_name, param.algorithm, str(param.seed))
         self.save_tb = param.save_tb
         self.save_model = param.save_model
         self.save_buffer = param.save_buffer
@@ -184,8 +191,17 @@ class MODEL():
         self.render = param.render
         self.port = param.port
         self.device = device
+        
+        self.work_dir = param.work_dir
+        
+        self.timestamp = "unknown"
+        match = re.search(r'(\d{8}_\d{6})', self.work_dir)
+        if match:
+            self.timestamp = match.group(1)
+        
         # 环境设置 
         self.train_env, self.test_envs, self.test_envs_mode = self.set_env()
+        
         # 配置保存地址
         utils.make_dir(self.work_dir)
         self.video_dir = utils.make_dir(os.path.join(self.work_dir, 'video'))
@@ -342,6 +358,9 @@ class MODEL():
                     else:
                         torch.save(self.agent.actor.state_dict(), os.path.join(self.model_dir, f"actor_{step}.pt"))
                         torch.save(self.agent.critic.state_dict(), os.path.join(self.model_dir, f"critic_{step}.pt"))
+                # 每100个episode输出任务信息
+                if episode % 100 == 0:
+                    print(f"[{self.timestamp}] | Task: {self.domain_name}_{self.task_name} | Algorithm: {self.algorithm} | E: {episode} | S: {step} | R: {episode_reward:.4f}")
                 # 记录训练信息
                 self.logger.log('train/episode_reward', episode_reward, step)
                 self.train_rewards.append(episode_reward)
@@ -472,7 +491,7 @@ if __name__ == "__main__":
     seed = args.seed
     work_dir = "./" + args.workdir
     save_tb = True
-    save_model = False
+    save_model = args.save_model
     save_buffer = False
     save_video = True
     render = False
