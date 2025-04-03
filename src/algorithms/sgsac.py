@@ -45,11 +45,7 @@ class SGSAC(SAC):
         )
         self.writer = SummaryWriter(tb_dir)
         
-        self.buffer_dir = os.path.join(args.work_dir,
-            args.domain_name + "_" + args.task_name,
-            args.algorithm,
-            str(args.seed),
-			'buffer')
+        self.buffer_dir = os.path.join(args.work_dir, 'buffer')
 
     def update_critic(self, obs, action, reward, next_obs, not_done, L=None, step=None):
         with torch.no_grad():

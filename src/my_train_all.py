@@ -44,6 +44,7 @@ def parse_args():
                                                                           "sgsac97", "sgsac98", "sgsac99", "sgsac101", "sgsac102", "sgsac103", "sgsac104", "sgsac105",'svea2', 'svea3', 'svea4', 'svea5', 'svea6',  "scpl", "scpl0", "scplr", "scpl0r"])
     parser.add_argument('--eval_mode', default='all', type=str, choices=['train', 'color_easy', 'color_hard', 'video_easy', 'video_hard', 'distracting_cs', 'none', 'all'])
     parser.add_argument('--save_model', action='store_true', help='Save model during training')
+    parser.add_argument('--batch_size', default=128, type=int, help='Batch size for training')
     args = parser.parse_args()
     return args
 
@@ -425,7 +426,7 @@ if __name__ == "__main__":
     init_steps = 1000
     train_steps = 500000
     discount = 0.99
-    batch_size = 128
+    batch_size = args.batch_size
     hidden_dim = 1024
     ################################################
     # actor
