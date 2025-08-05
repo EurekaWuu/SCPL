@@ -14,6 +14,9 @@ from algorithms.factory import make_agent
 from logger import Logger
 from video import VideoRecorder
 
+# 设置ffmpeg环境变量
+os.environ['IMAGEIO_FFMPEG_EXE'] = '/mnt/lustre/GPU4/home/wuhanpeng/anaconda3/envs/SCPL/lib/python3.8/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux64-v4.2.2'
+
 def parse_args():
     parser = argparse.ArgumentParser()
     # environment
@@ -501,7 +504,7 @@ if __name__ == "__main__":
     # 设置种子
     utils.set_seed_everywhere(seed)
     # 设备
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("device", device)
     ####################################################
     # 设置参数  
