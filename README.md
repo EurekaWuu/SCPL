@@ -2,15 +2,15 @@
 
 ## 项目简介
 
-SCPL (State-Conditional Predictive Learning) 是一个专注于视觉强化学习泛化的研究项目。该项目在具有视觉干扰的DMControl环境中训练智能体，通过归因机制和状态条件预测学习提高智能体在不同视觉条件下的泛化能力。
+SCPL (State-Conditional Predictive Learning) 在具有视觉干扰的DMControl环境中训练智能体，通过归因机制和状态条件预测学习提高智能体在不同视觉条件下的泛化能力。
 
-## 主要特性
+## 特点
 
-- 🤖 **SCPL算法**: 基于SAC的新型视觉强化学习算法，集成归因机制和转移模型
-- 🎨 **视觉泛化**: 支持颜色变化和视频背景干扰的泛化测试
-- 📊 **多种基线**: 实现了SAC、RAD、CURL、PAD、SODA、DRQ、SVEA等多种算法
-- 🌍 **DMControl环境**: 基于DeepMind Control Suite的连续控制任务
-- 🔍 **归因分析**: 通过梯度归因识别重要的视觉特征
+- **SCPL算法**: 基于SAC的新型视觉强化学习算法，集成归因机制和转移模型
+- **视觉泛化**: 支持颜色变化和视频背景干扰的泛化测试
+- **多种基线**: 实现了SAC、RAD、CURL、PAD、SODA、DRQ、SVEA等多种算法
+- **DMControl环境**: 基于DeepMind Control Suite的连续控制任务
+- **归因分析**: 梯度归因识别重要的视觉特征
 
 ## 支持的算法
 
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 - DMControl
 - Kornia (数据增强)
 
-## 快速开始
+## 开始
 
 ### 1. 环境设置
 
@@ -137,12 +137,11 @@ SCPL/
 
 ## SCPL算法原理
 
-SCPL算法的核心思想是通过以下机制提高视觉强化学习的泛化能力：
 
-1. **归因机制**: 使用梯度归因识别对决策重要的视觉特征
-2. **遮挡一致性**: 确保遮挡重要特征后Q值保持一致
+1. **归因**: 使用梯度归因识别对决策重要的视觉特征
+2. **遮挡一致性**: 遮挡重要特征后Q值保持一致
 3. **状态转移预测**: 学习状态转移模型预测下一状态
-4. **数据增强**: 使用随机覆盖等技术增强数据多样性
+4. **数据增强**: 随机覆盖等方法增强数据多样性
 
 ### 核心损失函数
 ```python
@@ -156,15 +155,14 @@ actor_loss = policy_loss + kl_divergence(π_aug, π_orig)
 transition_loss = prediction_loss + reward_loss
 ```
 
-## 实验结果
+## 实验
 
-项目在多个DMControl任务上进行了评估，主要指标包括：
+主要指标：
 
 - **颜色泛化**: 在不同颜色背景下的性能
 - **视频泛化**: 在动态视频背景下的性能  
 - **样本效率**: 达到目标性能所需的样本数量
 
-详细结果请参见 `figures/` 目录中的图表。
 
 ## 主要参数
 
@@ -185,39 +183,3 @@ transition_loss = prediction_loss + reward_loss
 - `--task_name`: 具体任务 (如: walk)
 - `--eval_mode`: 评估模式 (如: video_hard)
 - `--image_size`: 图像尺寸 (默认: 84)
-
-## 引用
-
-如果你在研究中使用了本项目，请引用：
-
-```bibtex
-@article{scpl2023,
-    title={SCPL: State-Conditional Predictive Learning for Visual Reinforcement Learning},
-    author={Your Name},
-    journal={Conference/Journal},
-    year={2023}
-}
-```
-
-## 许可证
-
-本项目基于 [LICENSE](LICENSE) 许可证开源。
-
-## 贡献指南
-
-欢迎提交issue和pull request来改进项目。在贡献代码前，请确保：
-
-1. 代码符合项目风格
-2. 添加必要的测试
-3. 更新相关文档
-
-## 联系方式
-
-如有问题或建议，请通过以下方式联系：
-
-- 提交GitHub Issue
-- 发送邮件至：[your-email@example.com]
-
----
-
-**注意**: 本项目仅用于研究目的，请遵守相关的研究伦理和使用规范。 
